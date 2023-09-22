@@ -34,7 +34,7 @@ function App() {
   // Handle filtering persons based on user input.
   const visiblePersons = (filter == '')
     ? persons
-    : persons.filter(person => person.name.toLowerCase().includes(filter))
+    : persons.filter(person => person.name.toLowerCase().includes(filter.toLocaleLowerCase()))
 
   // Handle adding persons.
   const handleSubmitClick = (event) => {
