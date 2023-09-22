@@ -1,6 +1,6 @@
-const Contact = ({contact}) => {
+const Contact = ({contact, handleContactClick}) => {
   return (
-    <div>{contact.name} {contact.number}</div>
+    <div>{contact.name} {contact.number} <button onClick={handleContactClick}>delete</button></div>
   )
 }
 

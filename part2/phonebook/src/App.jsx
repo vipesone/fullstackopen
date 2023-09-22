@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 
 import Contact from './components/Contact'
 import Filter from './components/Filter'
 import Form from './components/Form'
+
+import personService from './services/persons'
 
 function App() {
   // Variables for filter.
@@ -18,8 +19,8 @@ function App() {
 
   // Fetch phonebook.
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
+    personService
+      .getAll()
       .then(response => {
         setPersons(response.data)
       })
@@ -34,13 +35,36 @@ function App() {
   const handleSubmitClick = (event) => {
     event.preventDefault()
 
+    const newPerson = { name: newName, number: newNumber }
+
     const matchingPersons = persons.filter((person) => person.name == newName)
 
+    const confirmMessage = `${newName} is already added to phonebook, replace the old number with a new one?`
     if (matchingPersons.length) {
-      alert(`${newName} is already added to phonebook`)
+      const id = matchingPersons[0].id;
+      if (confirm(confirmMessage)) {
+        personService
+        .update(id, newPerson)
+          .then(response => {
+            setPersons(persons.map((person) => person.id != id ? person : response.data))
+          })
+        }
     } else {
-      const newPerson = { name: newName, number: newNumber }
-      setPersons([...persons, newPerson])
+      personService
+        .create(newPerson)
+        .then(response => {
+          setPersons(persons.concat(response.data))
+        })
+    }
+  }
+
+  // Handle person removal button click.
+  const handleContactRemoval = (id) => {
+    const person = persons.find((person) => person.id == id);
+    if (window.confirm(`Are you sure you want to remove ${person.name}?`)) {
+      personService
+        .remove(id)
+        .then(() => setPersons(persons.filter((person) => person.id != id)))
     }
   }
 
@@ -67,7 +91,11 @@ function App() {
         handleSubmitClick={handleSubmitClick} />
 
       <h2>Numbers</h2>
-      {visiblePersons.map((person, index) => <Contact key={index} contact={person} />) }
+      {visiblePersons.map((person, index) =>
+        <Contact
+          key={index}
+          contact={person}
+          handleContactClick={() => handleContactRemoval(person.id)} />) }
     </div>
   )
 }
