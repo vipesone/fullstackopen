@@ -1,8 +1,10 @@
 import SearchResultItem from "./SearchResultItem"
 import CountryDetails from "./CountryDetails"
 
-const SearchResults = ({visibleCountries}) => {
-  if (visibleCountries.length >= 10) {
+const SearchResults = ({ visibleCountries, handleOnClick, activeCountry }) => {
+  if (activeCountry) {
+    return <CountryDetails country={activeCountry} />
+  } else if (visibleCountries.length >= 10) {
     return <p>Too many search results</p>
   } else if (visibleCountries.length == 0) {
     return <p>No search results found</p>
@@ -11,7 +13,7 @@ const SearchResults = ({visibleCountries}) => {
   }
   return (
     <>
-      {visibleCountries.map((country, index) => <SearchResultItem key={country.cca2} item={country} />)}
+      {visibleCountries.map((country, index) => <SearchResultItem key={country.cca2} item={country} handleOnClick={() => handleOnClick(country.cca2)} />)}
     </>
   )
 }
