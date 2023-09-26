@@ -63,6 +63,13 @@ function App() {
             `${response.data.name} was added`,
             'notification'
           )
+        }).catch(error => {
+          if (error.response.data && error.response.data.message) {
+            addTemporaryNotification(
+              `${error.response.data.message}`,
+              'error'
+            )
+          }
         })
     }
   }
