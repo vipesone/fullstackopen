@@ -48,7 +48,7 @@ const newBlogPostToTestWith = {
   'title': 'What\'s new in Svelte: September 2023',
   'author': 'Dani Sandoval',
   'url': 'https://svelte.dev/blog/whats-new-in-svelte-september-2023',
-  'likes': 0
+  'likes': 1
 }
 
 beforeEach(async () => {
@@ -68,9 +68,11 @@ describe('blog API', () => {
     expect(blogItem.id).toBeDefined()
   })
   test('can add new blog posts', async () => {
-    await api.post('/api/blogs').send(newBlogPostToTestWith)
+    const insertResponse = await api.post('/api/blogs').send(newBlogPostToTestWith)
 
     const response = await api.get('/api/blogs')
+
+    expect(insertResponse.body.likes).toBe(newBlogPostToTestWith.likes)
 
     expect(response.body).toHaveLength(blogsToTestWith.length + 1)
   })
