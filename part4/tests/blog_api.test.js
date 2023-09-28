@@ -109,6 +109,21 @@ describe('blog API', () => {
 
     expect(foundBlog).toHaveLength(0)
   })
+  test('can update single blog post', async () => {
+    const initialResponse = await api.get('/api/blogs')
+
+    const firstElement = [...initialResponse.body].shift()
+
+    const newLikes = firstElement.likes + 25
+
+    const afterUpdate = await api
+      .put(`/api/blogs/${firstElement.id}`)
+      .send({ ...firstElement, ...{ likes: newLikes } })
+
+    expect(afterUpdate.status).toBe(200)
+
+    expect(afterUpdate.body.likes).toBe(newLikes)
+  })
 })
 
 
