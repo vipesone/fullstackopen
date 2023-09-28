@@ -4,10 +4,10 @@
   "description": "Blog application",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
     "lint": "eslint .",
-    "start": "node index.js",
-    "test": "jest --verbose"
+    "start": "cross-env NODE_ENV=production node index.js",
+    "test": "cross-env NODE_ENV=test jest --verbose --runInBand"
   },
   "repository": {
     "type": "git",
@@ -26,12 +26,14 @@
     "mongoose": "^7.5.3"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "eslint": "^8.50.0",
     "jest": "^29.7.0",
     "nodemon": "^3.0.1",
     "supertest": "^6.3.3"
   },
   "jest": {
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "globalTeardown": "./tests/teardown.js"
   }
 }
