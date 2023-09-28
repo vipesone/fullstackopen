@@ -1,3 +1,4 @@
+/*eslint no-unused-vars: ["error", { "ignoreRestSiblings": true }]*/
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
@@ -90,6 +91,23 @@ describe('blog API', () => {
     const response = await api.post('/api/blogs').send(newBlogPostWithoutURL)
 
     expect(response.status).toBe(400)
+  })
+  test('can delete single blog post', async () => {
+    const initialResponse = await api.get('/api/blogs')
+
+    const firstElement = [...initialResponse.body].shift()
+
+    await api
+      .delete(`/api/blogs/${firstElement.id}`)
+      .expect(204)
+
+    const afterDelete = await api.get('/api/blogs')
+
+    expect(afterDelete.body).toHaveLength(initialResponse.body.length - 1)
+
+    const foundBlog = afterDelete.body.filter((blog) => blog.id === firstElement.id)
+
+    expect(foundBlog).toHaveLength(0)
   })
 })
 
