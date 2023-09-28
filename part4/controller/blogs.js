@@ -15,7 +15,17 @@ blogsRouter.get('/:id', async (request, response) => {
 })
 
 blogsRouter.post('/', async(request, response) => {
-  const user = await(User.findById(request.body.userId))
+  let userId = null
+  if (!request.body.userId) {
+    const users = await User.find({})
+
+    const firstUser = [...users].shift()
+
+    userId = firstUser.id
+  } else {
+    userId = request.body.userId
+  }
+  const user = await (User.findById(userId))
   const blog = new Blog({ likes: 0, ...request.body, user: user._id })
   const newBlog = await blog.save()
 
@@ -38,11 +48,13 @@ blogsRouter.put('/:id', async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
-  const user = User.findById(request.body.userId)
   await Blog.findByIdAndRemove(request.params.id)
 
-  user.blogs = user.blogs.filter((id => id !== request.params.id))
-  await user.save()
+  if (request.body.userId) {
+    let user = User.findById(request.body.userId)
+    user.blogs = user.blogs.filter((id => id !== request.params.id))
+    await user.save()
+  }
 
   response.status(204).end()
 })

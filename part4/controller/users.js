@@ -9,8 +9,14 @@ usersRouter.get('/', async (request, response) => {
   response.json(users)
 })
 
-usersRouter.post('/', async (request, response) => {
+usersRouter.post('/', async (request, response, next) => {
   const { username, name, password } = request.body
+
+  if (username === undefined || password === undefined) {
+    next({ name: 'UserRequiredMissing' }).end()
+  } else if (password.length < 3) {
+    next({ name: 'UserInvalidPassword' }).end()
+  }
 
   const saltRounds = 10
   const passwordHash = await bcrypt.hash(password, saltRounds)

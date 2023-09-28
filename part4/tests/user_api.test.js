@@ -54,4 +54,54 @@ describe('user API', () => {
     const usersAfterInsert = await helper.usersInDb()
     expect(usersAfterInsert).toHaveLength(usersInitially.length)
   })
+  test('rejects users without username', async () => {
+    const usersInitially = await helper.usersInDb()
+
+    const newUser = {
+      name: 'Matti Meikäläinen',
+      password: 'supersalainen'
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAfterInsert = await helper.usersInDb()
+    expect(usersAfterInsert).toHaveLength(usersInitially.length)
+  })
+  test('rejects users without password', async () => {
+    const usersInitially = await helper.usersInDb()
+
+    const newUser = {
+      name: 'Matti Meikäläinen',
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAfterInsert = await helper.usersInDb()
+    expect(usersAfterInsert).toHaveLength(usersInitially.length)
+  })
+  test('rejects users with password under 3 characters', async () => {
+    const usersInitially = await helper.usersInDb()
+
+    const newUser = {
+      name: 'Matti Meikäläinen',
+      password: 'su'
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAfterInsert = await helper.usersInDb()
+    expect(usersAfterInsert).toHaveLength(usersInitially.length)
+  })
 })
