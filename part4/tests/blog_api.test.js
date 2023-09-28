@@ -73,6 +73,24 @@ describe('blog API', () => {
 
     expect(response.body).toHaveLength(blogsToTestWith.length + 1)
   })
+  test('will default blog post likes to zero', async () => {
+    const { likes, ...newBlogPostWithoutLike } = newBlogPostToTestWith
+    const response = await api.post('/api/blogs').send(newBlogPostWithoutLike)
+
+    expect(response.body.likes).toBe(0)
+  })
+  test('will not allow blog post without title', async () => {
+    const { title, ...newBlogPostWithoutTitle } = newBlogPostToTestWith
+    const response = await api.post('/api/blogs').send(newBlogPostWithoutTitle)
+
+    expect(response.status).toBe(400)
+  })
+  test('will not allow blog post without URL', async () => {
+    const { url, ...newBlogPostWithoutURL } = newBlogPostToTestWith
+    const response = await api.post('/api/blogs').send(newBlogPostWithoutURL)
+
+    expect(response.status).toBe(400)
+  })
 })
 
 
