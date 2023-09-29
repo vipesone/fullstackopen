@@ -139,15 +139,23 @@ describe('blog API', () => {
     expect(foundBlog).toHaveLength(0)
   })
   test('can update single blog post', async () => {
-    const initialResponse = await api.get('/api/blogs')
+    const token = await testHelpers.getLoginToken()
 
-    const firstElement = [...initialResponse.body].shift()
+    const insertResponse = await api
+      .post('/api/blogs')
+      .send(newBlogPostToTestWith)
+      .set('Authorization', `Bearer ${token}`)
 
-    const newLikes = firstElement.likes + 25
+    expect(insertResponse.status).toBe(201)
+
+    const blog = insertResponse.body
+
+    const newLikes = blog.likes + 25
 
     const afterUpdate = await api
-      .put(`/api/blogs/${firstElement.id}`)
-      .send({ ...firstElement, ...{ likes: newLikes } })
+      .put(`/api/blogs/${blog.id}`)
+      .send({ ...blog, ...{ likes: newLikes } })
+      .set('Authorization', `Bearer ${token}`)
 
     expect(afterUpdate.status).toBe(200)
 

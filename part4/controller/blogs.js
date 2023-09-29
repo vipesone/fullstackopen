@@ -27,7 +27,7 @@ blogsRouter.post('/', middleware.userExtractor, async(request, response) => {
   response.status(201).json(newBlog)
 })
 
-blogsRouter.put('/:id', async (request, response) => {
+blogsRouter.put('/:id', middleware.userExtractor, async (request, response) => {
   const updatedBlog = {
     title: request.body.title,
     likes: request.body.likes,
