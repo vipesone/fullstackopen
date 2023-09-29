@@ -4,6 +4,7 @@ const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
+const testHelpers = require('./test_helpers')
 
 const blogsToTestWith = [
   {
@@ -68,7 +69,12 @@ describe('blog API', () => {
     expect(blogItem.id).toBeDefined()
   })
   test('can add new blog posts', async () => {
-    const insertResponse = await api.post('/api/blogs').send(newBlogPostToTestWith)
+    const token = await testHelpers.getLoginToken()
+
+    const insertResponse = await api
+      .post('/api/blogs')
+      .send(newBlogPostToTestWith)
+      .set('Authorization', `Bearer ${token}`)
 
     const response = await api.get('/api/blogs')
 
@@ -77,37 +83,52 @@ describe('blog API', () => {
     expect(response.body).toHaveLength(blogsToTestWith.length + 1)
   })
   test('will default blog post likes to zero', async () => {
+    const token = await testHelpers.getLoginToken()
     const { likes, ...newBlogPostWithoutLike } = newBlogPostToTestWith
-    const response = await api.post('/api/blogs').send(newBlogPostWithoutLike)
+    const response = await api
+      .post('/api/blogs')
+      .send(newBlogPostWithoutLike)
+      .set('Authorization', `Bearer ${token}`)
 
     expect(response.body.likes).toBe(0)
   })
   test('will not allow blog post without title', async () => {
+    const token = await testHelpers.getLoginToken()
     const { title, ...newBlogPostWithoutTitle } = newBlogPostToTestWith
-    const response = await api.post('/api/blogs').send(newBlogPostWithoutTitle)
+    const response = await api
+      .post('/api/blogs')
+      .send(newBlogPostWithoutTitle)
+      .set('Authorization', `Bearer ${token}`)
 
     expect(response.status).toBe(400)
   })
   test('will not allow blog post without URL', async () => {
+    const token = await testHelpers.getLoginToken()
     const { url, ...newBlogPostWithoutURL } = newBlogPostToTestWith
-    const response = await api.post('/api/blogs').send(newBlogPostWithoutURL)
+    const response = await api
+      .post('/api/blogs')
+      .send(newBlogPostWithoutURL)
+      .set('Authorization', `Bearer ${token}`)
 
     expect(response.status).toBe(400)
   })
   test('can delete single blog post', async () => {
-    const initialResponse = await api.get('/api/blogs')
+    const token = await testHelpers.getLoginToken()
 
-    const firstElement = [...initialResponse.body].shift()
+    const insertResponse = await api
+      .post('/api/blogs')
+      .send(newBlogPostToTestWith)
+      .set('Authorization', `Bearer ${token}`)
 
-    await api
-      .delete(`/api/blogs/${firstElement.id}`)
-      .expect(204)
+    const response = await api
+      .delete(`/api/blogs/${insertResponse.body.id}`)
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(response.status).toBe(204)
 
     const afterDelete = await api.get('/api/blogs')
 
-    expect(afterDelete.body).toHaveLength(initialResponse.body.length - 1)
-
-    const foundBlog = afterDelete.body.filter((blog) => blog.id === firstElement.id)
+    const foundBlog = afterDelete.body.filter((blog) => blog.id === insertResponse.body.id)
 
     expect(foundBlog).toHaveLength(0)
   })
