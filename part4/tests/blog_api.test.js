@@ -68,6 +68,12 @@ describe('blog API', () => {
     const blogItem = [...response.body].shift()
     expect(blogItem.id).toBeDefined()
   })
+  test('can not add new blog post without token', async () => {
+    const insertResponse = await api
+      .post('/api/blogs')
+      .send(newBlogPostToTestWith)
+    expect(insertResponse.status).toBe(401)
+  })
   test('can add new blog posts', async () => {
     const token = await testHelpers.getLoginToken()
 

@@ -7,7 +7,7 @@ const errorHandler = (error, request, response, next) => {
   } else if (error.name === 'ValidationError') {
     return response.status(400).send({ error: error.message })
   } else if (error.name === 'JsonWebTokenError') {
-    return response.status(400).send({ error: 'missing or invalid token', token: request.token })
+    return response.status(401).send({ error: 'missing or invalid token', token: request.token })
   } else if (error.name === 'UserRequiredMissing') {
     return response.status(400).send({ error: 'username or password missing' })
   } else if (error.name === 'UserInvalidPassword') {
