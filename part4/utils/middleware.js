@@ -26,6 +26,6 @@ const tokenExtractor = (request, response, next) => {
 }
 
 module.exports = {
-  tokenExtractor,
-  errorHandler
+  errorHandler,
+  tokenExtractor
 }
