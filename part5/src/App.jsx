@@ -126,15 +126,17 @@ const App = () => {
   // Handle removing single blog item.
   const removeBlog = async (blogToRemove) => {
     try {
-      const response = await blogService.remove(blogToRemove.id)
+      if (confirm(`Are you sure you want to remove ${blogToRemove.title}?`)) {
+        await blogService.remove(blogToRemove.id)
 
-      const updatedBlogItems = blogs.filter((blog) => blog.id != blogToRemove.id)
+        const updatedBlogItems = blogs.filter((blog) => blog.id != blogToRemove.id)
 
-      setBlogs(updatedBlogItems)
-      addTemporaryNotification(
-        `${blogToRemove.title} by ${blogToRemove.author} was removed`,
-        'notification'
-      )
+        setBlogs(updatedBlogItems)
+        addTemporaryNotification(
+          `${blogToRemove.title} by ${blogToRemove.author} was removed`,
+          'notification'
+        )
+      }
     } catch (exception) {
       addTemporaryNotification(
         'Unknown error while removing blog',
