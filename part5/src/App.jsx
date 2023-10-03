@@ -10,8 +10,8 @@ import loginService from './services/login'
 const App = () => {
   const [blogs, setBlogs] = useState([])
 
-  const [notificationMessage, setNotificationMessage] = useState(null);
-  const [notificationStatus, setNotificationStatus] = useState(null);
+  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [notificationStatus, setNotificationStatus] = useState(null)
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -104,11 +104,11 @@ const App = () => {
   // Handle like button for single blog item.
   const likeBlog = async (blog) => {
     try {
-      const updatedBlog = {...blog, likes: blog.likes + 1}
+      const updatedBlog = { ...blog, likes: blog.likes + 1 }
 
       const response = await blogService.update(updatedBlog.id, updatedBlog)
 
-      const updatedBlogItems = blogs.map((blog) => blog.id == updatedBlog.id ? updatedBlog : blog)
+      const updatedBlogItems = blogs.map((blog) => blog.id === updatedBlog.id ? updatedBlog : blog)
 
       setBlogs(updatedBlogItems)
       addTemporaryNotification(
@@ -129,7 +129,7 @@ const App = () => {
       if (confirm(`Are you sure you want to remove ${blogToRemove.title}?`)) {
         await blogService.remove(blogToRemove.id)
 
-        const updatedBlogItems = blogs.filter((blog) => blog.id != blogToRemove.id)
+        const updatedBlogItems = blogs.filter((blog) => blog.id !== blogToRemove.id)
 
         setBlogs(updatedBlogItems)
         addTemporaryNotification(
@@ -186,9 +186,9 @@ const App = () => {
             blog={blog}
             likeBlog={likeBlog}
             removeBlog={removeBlog}
-            isOwner={user.username == blog.user.username} />
+            isOwner={user.username === blog.user.username} />
         )}
-        </div>
+      </div>
       }
     </div>
   )

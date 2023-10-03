@@ -46,4 +46,4 @@ export default {
   setToken,
   remove,
   update
- }
+}
