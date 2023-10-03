@@ -123,6 +123,13 @@ const App = () => {
     }
   }
 
+  // Returns sorted list of blogs as a copy.
+  const sortByLikes = blogs => {
+    return [...blogs].sort((a, b) => {
+      return a.likes < b.likes
+    })
+  }
+
   const handleLogoutClick = () => {
     window.localStorage.removeItem('blogUser')
     setUser(null)
@@ -150,7 +157,7 @@ const App = () => {
           />
         </Togglable>
 
-        {blogs.map(blog =>
+        {sortByLikes(blogs).map(blog =>
           <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
         )}
         </div>
