@@ -74,7 +74,16 @@ const App = () => {
     try {
       const response = await blogService.create(newBlog)
 
-      setBlogs(blogs.concat(response))
+      const addedItem = {
+        ...response,
+        user: {
+          id: user.id,
+          name: user.name,
+          username: user.username
+        }
+      }
+
+      setBlogs(blogs.concat(addedItem))
       addTemporaryNotification(
         `${response.title} by ${response.author} was added`,
         'notification'
