@@ -123,6 +123,26 @@ const App = () => {
     }
   }
 
+  // Handle removing single blog item.
+  const removeBlog = async (blogToRemove) => {
+    try {
+      const response = await blogService.remove(blogToRemove.id)
+
+      const updatedBlogItems = blogs.filter((blog) => blog.id != blogToRemove.id)
+
+      setBlogs(updatedBlogItems)
+      addTemporaryNotification(
+        `${blogToRemove.title} by ${blogToRemove.author} was removed`,
+        'notification'
+      )
+    } catch (exception) {
+      addTemporaryNotification(
+        'Unknown error while removing blog',
+        'error'
+      )
+    }
+  }
+
   // Returns sorted list of blogs as a copy.
   const sortByLikes = blogs => {
     return [...blogs].sort((a, b) => {
@@ -130,6 +150,7 @@ const App = () => {
     })
   }
 
+  // Clears out currently logged in user.
   const handleLogoutClick = () => {
     window.localStorage.removeItem('blogUser')
     setUser(null)
@@ -158,7 +179,12 @@ const App = () => {
         </Togglable>
 
         {sortByLikes(blogs).map(blog =>
-          <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
+          <Blog
+            key={blog.id}
+            blog={blog}
+            likeBlog={likeBlog}
+            removeBlog={removeBlog}
+            isOwner={user.username == blog.user.username} />
         )}
         </div>
       }
