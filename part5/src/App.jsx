@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -16,12 +17,10 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
-  const [blogTitle, setBlogTitle] = useState('')
-  const [blogAuthor, setBlogAuthor] = useState('')
-  const [blogUrl, setBlogUrl] = useState('')
+  const blogFormRef = useRef()
 
   useEffect(() => {
-    const blogs = blogService.getAll().then(blogs =>
+    blogService.getAll().then(blogs =>
       setBlogs( blogs )
     )
   }, [])
@@ -71,19 +70,16 @@ const App = () => {
   }
 
   // Handle submit for blog addition form.
-  const handleBlogSubmitClick = async (event) => {
-    event.preventDefault()
-
+  const addBlog = async (newBlog) => {
     try {
-      const response = await blogService.create({
-        title: blogTitle, author: blogAuthor, url: blogUrl
-      })
+      const response = await blogService.create(newBlog)
 
       setBlogs(blogs.concat(response))
       addTemporaryNotification(
         `${response.title} by ${response.author} was added`,
         'notification'
       )
+      blogFormRef.current.toggle()
     } catch (exception) {
       const message = exception.response.data.error
         ? exception.response.data.error
@@ -117,12 +113,11 @@ const App = () => {
         <p>{user.name} is logged in <button onClick={handleLogoutClick}>logout</button></p>
 
         <h2>Add new blog item</h2>
-        <BlogForm
-          handleBlogTitleChange={({target}) => setBlogTitle(target.value)}
-          handleBlogAuthorChange={({ target }) => setBlogAuthor(target.value)}
-          handleBlogUrlChange={({ target }) => setBlogUrl(target.value)}
-          handleBlogSubmitClick={handleBlogSubmitClick}
-        />
+        <Togglable buttonLabel="New blog" ref={blogFormRef}>
+          <BlogForm
+            addBlog={addBlog}
+          />
+        </Togglable>
 
         {blogs.map(blog =>
           <Blog key={blog.id} blog={blog} />
