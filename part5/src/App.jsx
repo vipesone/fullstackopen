@@ -21,9 +21,20 @@ const App = () => {
   const [blogUrl, setBlogUrl] = useState('')
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
+    const blogs = blogService.getAll().then(blogs =>
       setBlogs( blogs )
     )
+  }, [])
+
+  useEffect(() => {
+    const userJSON = window.localStorage.getItem('blogUser')
+
+    if (userJSON) {
+      const parsedUser = JSON.parse(userJSON)
+
+      setUser(parsedUser)
+      blogService.setToken(parsedUser.token)
+    }
   }, [])
 
   // Set up dissappearing notification.
@@ -46,6 +57,10 @@ const App = () => {
         username, password
       })
 
+      window.localStorage.setItem(
+        'blogUser', JSON.stringify(user)
+      )
+
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
@@ -66,7 +81,7 @@ const App = () => {
 
       setBlogs(blogs.concat(response))
       addTemporaryNotification(
-        `${response.data.name} was added`,
+        `${response.title} by ${response.author} was added`,
         'notification'
       )
     } catch (exception) {
@@ -81,6 +96,12 @@ const App = () => {
     }
   }
 
+  const handleLogoutClick = () => {
+    window.localStorage.removeItem('blogUser')
+    setUser(null)
+    blogService.setToken('')
+  }
+
   return (
     <div>
       <h1>Blogs</h1>
@@ -93,20 +114,21 @@ const App = () => {
         setUsername={setUsername}
         setPassword={setPassword} />}
       { user && <div>
-        <p>{user.name} is logged in</p>
+        <p>{user.name} is logged in <button onClick={handleLogoutClick}>logout</button></p>
 
+        <h2>Add new blog item</h2>
         <BlogForm
           handleBlogTitleChange={({target}) => setBlogTitle(target.value)}
           handleBlogAuthorChange={({ target }) => setBlogAuthor(target.value)}
           handleBlogUrlChange={({ target }) => setBlogUrl(target.value)}
           handleBlogSubmitClick={handleBlogSubmitClick}
         />
+
+        {blogs.map(blog =>
+          <Blog key={blog.id} blog={blog} />
+        )}
         </div>
       }
-
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
     </div>
   )
 }
