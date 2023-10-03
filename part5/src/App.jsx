@@ -92,6 +92,28 @@ const App = () => {
     }
   }
 
+  // Handle like button for single blog item.
+  const likeBlog = async (blog) => {
+    try {
+      const updatedBlog = {...blog, likes: blog.likes + 1}
+
+      const response = await blogService.update(updatedBlog.id, updatedBlog)
+
+      const updatedBlogItems = blogs.map((blog) => blog.id == updatedBlog.id ? updatedBlog : blog)
+
+      setBlogs(updatedBlogItems)
+      addTemporaryNotification(
+        `${response.title} by ${response.author} was liked`,
+        'notification'
+      )
+    } catch (exception) {
+      addTemporaryNotification(
+        'Unknown error while liking blog',
+        'error'
+      )
+    }
+  }
+
   const handleLogoutClick = () => {
     window.localStorage.removeItem('blogUser')
     setUser(null)
@@ -120,7 +142,7 @@ const App = () => {
         </Togglable>
 
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
         )}
         </div>
       }

@@ -10,3 +10,23 @@
 .notification.error {
   color: red;
 }
+
+.blog-item {
+  border: 2px dotted grey;
+  margin: 10px 0;
+  padding: 10px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px 0;
+}
+
+.blog-item button {
+  margin-left: 6px;
+}
+
+.blog-item__details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
