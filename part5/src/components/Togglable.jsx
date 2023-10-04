@@ -22,7 +22,7 @@ const Togglable = forwardRef((props, ref) => {
       <div style={hideWhenToggled}>
         <button onClick={toggle}>{props.buttonLabel}</button>
       </div>
-      <div style={hideWhenUntoggled}>
+      <div style={hideWhenUntoggled} className="togglable-content">
         {props.children}
         <button onClick={toggle}>cancel</button>
       </div>
