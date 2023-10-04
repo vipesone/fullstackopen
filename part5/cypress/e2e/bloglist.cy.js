@@ -75,6 +75,32 @@ describe('Bloglist ', function() {
         .invoke('text')
         .should('eq', '1')
     })
+
+    it('blog post can be removed', function () {
+      // Add new blog post to work with.
+      cy.addBlog({
+        title: 'Blog to be removed',
+        author: 'Removed Author',
+        url: 'https://fullstackopen.com/osa5/end_to_end_testaus#tehtavat-5-17-5-23'
+      })
+
+      // Open details and click the remove button.
+      cy
+        .get('.blog-item')
+        .should('contain', 'Blog to be removed Removed Author')
+        .contains('show')
+        .click()
+        .closest('.blog-item')
+        .find('.remove-button')
+        .click()
+
+      // Finally make sure the blog is not listed anymore.
+      cy
+        .get('.blog-item')
+        .find('.like-count')
+        .invoke('text')
+        .should('not.eq', 'Blog to be removed')
+    })
   })
 })
 
