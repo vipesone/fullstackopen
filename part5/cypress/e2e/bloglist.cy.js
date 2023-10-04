@@ -101,6 +101,35 @@ describe('Bloglist ', function() {
         .invoke('text')
         .should('not.eq', 'Blog to be removed')
     })
+
+    it('blog post remove button is visible only to the owner', function () {
+      // Add new blog post to work with.
+      cy.addBlog({
+        title: 'Blog to be removed',
+        author: 'Removed Author',
+        url: 'https://fullstackopen.com/osa5/end_to_end_testaus#tehtavat-5-17-5-23'
+      })
+
+      // Create another user and log in with the credentials.
+      const user = {
+        name: 'Maija Meikäläinen',
+        username: 'maijameikalainen',
+        password: 'lahnaonkala'
+      }
+      cy.request('POST', `${Cypress.env('BACKEND')}/users/`, user)
+      cy.login({ username: 'maijameikalainen', password: 'lahnaonkala' })
+      cy.visit('')
+
+      // Open details and make sure remove button is not visible.
+      cy
+        .get('.blog-item')
+        .should('contain', 'Blog to be removed Removed Author')
+        .contains('show')
+        .click()
+        .closest('.blog-item')
+        .find('.remove-button')
+        .should('not.not.exist')
+    })
   })
 })
 
