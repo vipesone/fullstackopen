@@ -12,7 +12,7 @@ const Blog = ({ blog, likeBlog, removeBlog, isOwner }) => {
       </div>
       <div style={detailsVisible ? {} : { display: 'none' }} className="blog-item__details">
         <div>{blog.url}</div>
-        <div>Likes: {blog.likes} <button onClick={() => likeBlog(blog)}>like</button></div>
+        <div>Likes: <span className="like-count">{blog.likes}</span> <button className="like-button" onClick={() => likeBlog(blog)}>like</button></div>
         {blog.user && <div>{blog.user.name}</div>}
         {isOwner && <button onClick={() => removeBlog(blog)}>Remove</button>}
       </div>
