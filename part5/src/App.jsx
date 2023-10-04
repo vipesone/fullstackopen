@@ -148,7 +148,7 @@ const App = () => {
   // Returns sorted list of blogs as a copy.
   const sortByLikes = blogs => {
     return [...blogs].sort((a, b) => {
-      return a.likes < b.likes
+      return b.likes - a.likes
     })
   }
 
