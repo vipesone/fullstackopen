@@ -5,7 +5,7 @@ const Blog = ({ blog, likeBlog, removeBlog, isOwner }) => {
 
   return (
     <div className="blog-item">
-      <div>{blog.title} {blog.author}
+      <div><span className="blog-item__title">{blog.title}</span> {blog.author}
         <button onClick={() => setDetailsVisible(!detailsVisible)}>
           {detailsVisible ? 'hide' : 'show'}
         </button>
