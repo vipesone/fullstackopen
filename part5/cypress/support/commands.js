@@ -8,7 +8,6 @@ Cypress.Commands.add('login', ({ username, password }) => {
 })
 
 Cypress.Commands.add('addBlog', ({ title, author, url, likes = 0 }) => {
-  console.log(localStorage)
   const blogUser = JSON.parse(localStorage.getItem('blogUser'))
   cy.request({
     url: `${Cypress.env('BACKEND')}/blogs`,
