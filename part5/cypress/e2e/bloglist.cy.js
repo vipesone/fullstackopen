@@ -123,18 +123,60 @@ describe('Bloglist ', function() {
       // Open details and make sure remove button is not visible.
       cy
         .get('.blog-item')
-        .should('contain', 'Blog to be removed Removed Author')
+        .contains('Blog to be removed Removed Author')
+        .closest('.blog-item')
         .contains('show')
         .click()
         .closest('.blog-item')
         .find('.remove-button')
         .should('not.not.exist')
     })
+
+    it('blogs are ordered by their likes', function () {
+      // Add two blog posts to work with.
+      cy.addBlog(blogToTest)
+      cy.addBlog(anotherBlogToTest)
+
+      // Make sure blogs are initially ordered correctly. This point they are
+      // in their creation order because of no likes yet.
+      cy.get('.blog-item__title').eq(0).should('contain', blogToTest.title)
+      cy.get('.blog-item__title').eq(1).should('contain', anotherBlogToTest.title)
+
+      // Open details and click the like button.
+      cy
+        .get('.blog-item__title')
+        .contains('My second own blog')
+        .closest('.blog-item')
+        .contains('show')
+        .click()
+        .closest('.blog-item')
+        .find('.like-button')
+        .click()
+        .closest('.blog-item')
+        .find('.like-count')
+        .invoke('text')
+        .should('eq', '1')
+
+      // Make sure blog items have switched positions because of like.
+      cy.get('.blog-item__title').eq(0).should('contain', anotherBlogToTest.title)
+      cy.get('.blog-item__title').eq(1).should('contain', blogToTest.title)
+    })
   })
 })
 
 const blogToTest = {
   title: 'My very own blog',
+  author: 'Matti Meikäläinen',
+  likes: 0,
+  url: 'https://www.google.com',
+  user: {
+    name: 'Matti Meikäläinen',
+    username: 'mattimeikalainen'
+  }
+}
+
+const anotherBlogToTest = {
+  title: 'My second own blog',
   author: 'Matti Meikäläinen',
   likes: 0,
   url: 'https://www.google.com',
