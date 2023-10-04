@@ -7,13 +7,13 @@ Cypress.Commands.add('login', ({ username, password }) => {
   })
 })
 
-Cypress.Commands.add('addBlog', ({ title, author, url }) => {
+Cypress.Commands.add('addBlog', ({ title, author, url, likes = 0 }) => {
   console.log(localStorage)
   const blogUser = JSON.parse(localStorage.getItem('blogUser'))
   cy.request({
     url: `${Cypress.env('BACKEND')}/blogs`,
     method: 'POST',
-    body: { title, author, url },
+    body: { title, author, url, likes },
     headers: {
       'Authorization': `Bearer ${blogUser.token}`
     }
