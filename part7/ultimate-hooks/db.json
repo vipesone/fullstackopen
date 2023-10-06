@@ -1,26 +1,6 @@
 {
   "notes": [
-    {
-      "content": "Notee",
-      "id": 1,
-      "votes": 2
-    },
-    {
-      "content": "Notee",
-      "id": 2,
-      "votes": 2
-    },
-    {
-      "content": "note",
-      "id": 3,
-      "votes": 1
-    }
   ],
   "persons": [
-    {
-      "content": "Notee",
-      "id": 1,
-      "votes": 3
-    }
   ]
 }
