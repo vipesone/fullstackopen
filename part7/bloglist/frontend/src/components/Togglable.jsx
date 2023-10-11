@@ -4,8 +4,8 @@ import PropTypes from 'prop-types'
 const Togglable = forwardRef((props, ref) => {
   const [toggled, setToggled] = useState(false)
 
-  const hideWhenToggled = { display: (toggled ? 'none' : '') }
-  const hideWhenUntoggled = { display: (toggled ? '' : 'none') }
+  const hideWhenToggled = { display: toggled ? 'none' : '' }
+  const hideWhenUntoggled = { display: toggled ? '' : 'none' }
 
   const toggle = () => {
     setToggled(!toggled)

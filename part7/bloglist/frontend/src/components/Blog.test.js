@@ -5,7 +5,9 @@ import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
 test('initial render does not show full details', () => {
-  const { container } = render(<Blog blog={blogToTest} likeBlog={() => null} removeBlog={() => null} isOwner={true} />)
+  const { container } = render(
+    <Blog blog={blogToTest} likeBlog={() => null} removeBlog={() => null} isOwner={true} />
+  )
 
   const element = container.querySelector('.blog-item')
   expect(element).toHaveTextContent(blogToTest.title)
@@ -16,7 +18,9 @@ test('initial render does not show full details', () => {
 })
 
 test('clicking the show button displays details', async () => {
-  const { container } = render(<Blog blog={blogToTest} likeBlog={() => null} removeBlog={() => null} isOwner={true} />)
+  const { container } = render(
+    <Blog blog={blogToTest} likeBlog={() => null} removeBlog={() => null} isOwner={true} />
+  )
 
   const user = userEvent.setup()
   const button = screen.getByText('show')

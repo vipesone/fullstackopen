@@ -20,9 +20,7 @@ const App = () => {
   const blogFormRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )
+    blogService.getAll().then((blogs) => setBlogs(blogs))
   }, [])
 
   useEffect(() => {
@@ -53,12 +51,11 @@ const App = () => {
 
     try {
       const user = await loginService.login({
-        username, password
+        username,
+        password
       })
 
-      window.localStorage.setItem(
-        'blogUser', JSON.stringify(user)
-      )
+      window.localStorage.setItem('blogUser', JSON.stringify(user))
 
       blogService.setToken(user.token)
       setUser(user)
@@ -84,20 +81,14 @@ const App = () => {
       }
 
       setBlogs(blogs.concat(addedItem))
-      addTemporaryNotification(
-        `${response.title} by ${response.author} was added`,
-        'notification'
-      )
+      addTemporaryNotification(`${response.title} by ${response.author} was added`, 'notification')
       blogFormRef.current.toggle()
     } catch (exception) {
       const message = exception.response.data.error
         ? exception.response.data.error
         : 'Unknown error occurred while adding blog'
 
-      addTemporaryNotification(
-        message,
-        'error'
-      )
+      addTemporaryNotification(message, 'error')
     }
   }
 
@@ -108,18 +99,14 @@ const App = () => {
 
       const response = await blogService.update(updatedBlog.id, updatedBlog)
 
-      const updatedBlogItems = blogs.map((blog) => blog.id === updatedBlog.id ? updatedBlog : blog)
+      const updatedBlogItems = blogs.map((blog) =>
+        blog.id === updatedBlog.id ? updatedBlog : blog
+      )
 
       setBlogs(updatedBlogItems)
-      addTemporaryNotification(
-        `${response.title} by ${response.author} was liked`,
-        'notification'
-      )
+      addTemporaryNotification(`${response.title} by ${response.author} was liked`, 'notification')
     } catch (exception) {
-      addTemporaryNotification(
-        'Unknown error while liking blog',
-        'error'
-      )
+      addTemporaryNotification('Unknown error while liking blog', 'error')
     }
   }
 
@@ -138,15 +125,12 @@ const App = () => {
         )
       }
     } catch (exception) {
-      addTemporaryNotification(
-        'Unknown error while removing blog',
-        'error'
-      )
+      addTemporaryNotification('Unknown error while removing blog', 'error')
     }
   }
 
   // Returns sorted list of blogs as a copy.
-  const sortByLikes = blogs => {
+  const sortByLikes = (blogs) => {
     return [...blogs].sort((a, b) => {
       return b.likes - a.likes
     })
@@ -164,32 +148,37 @@ const App = () => {
       <h1>Blogs</h1>
       <Notification message={notificationMessage} status={notificationStatus} />
 
-      { !user && <LoginForm
-        handleLogin={handleLogin}
-        username={username}
-        password={password}
-        setUsername={setUsername}
-        setPassword={setPassword} />}
-      { user && <div>
-        <p>{user.name} is logged in <button onClick={handleLogoutClick}>logout</button></p>
+      {!user && (
+        <LoginForm
+          handleLogin={handleLogin}
+          username={username}
+          password={password}
+          setUsername={setUsername}
+          setPassword={setPassword}
+        />
+      )}
+      {user && (
+        <div>
+          <p>
+            {user.name} is logged in <button onClick={handleLogoutClick}>logout</button>
+          </p>
 
-        <h2>Add new blog item</h2>
-        <Togglable buttonLabel="New blog" ref={blogFormRef}>
-          <BlogForm
-            addBlog={addBlog}
-          />
-        </Togglable>
+          <h2>Add new blog item</h2>
+          <Togglable buttonLabel="New blog" ref={blogFormRef}>
+            <BlogForm addBlog={addBlog} />
+          </Togglable>
 
-        {sortByLikes(blogs).map(blog =>
-          <Blog
-            key={blog.id}
-            blog={blog}
-            likeBlog={likeBlog}
-            removeBlog={removeBlog}
-            isOwner={blog.user && (user.username === blog.user.username)} />
-        )}
-      </div>
-      }
+          {sortByLikes(blogs).map((blog) => (
+            <Blog
+              key={blog.id}
+              blog={blog}
+              likeBlog={likeBlog}
+              removeBlog={removeBlog}
+              isOwner={blog.user && user.username === blog.user.username}
+            />
+          ))}
+        </div>
+      )}
     </div>
   )
 }

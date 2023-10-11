@@ -1,4 +1,4 @@
-describe('Bloglist ', function() {
+describe('Bloglist ', function () {
   beforeEach(function () {
     cy.request('POST', `${Cypress.env('BACKEND')}/testing/reset`)
     const user = {
@@ -16,7 +16,7 @@ describe('Bloglist ', function() {
     cy.get('#login-button').should('be.visible')
   })
 
-  describe('Login', function() {
+  describe('Login', function () {
     it('succeeds with correct credentials', function () {
       cy.get('#username').type('mattimeikalainen')
       cy.get('#password').type('haukionkala')
@@ -59,8 +59,7 @@ describe('Bloglist ', function() {
       })
 
       // Open details and click the like button.
-      cy
-        .get('.blog-item')
+      cy.get('.blog-item')
         .should('contain', 'Blog to be liked Liked Author')
         .contains('show')
         .click()
@@ -69,11 +68,7 @@ describe('Bloglist ', function() {
         .click()
 
       // Finally check if the like count has been updated.
-      cy
-        .get('.blog-item')
-        .find('.like-count')
-        .invoke('text')
-        .should('eq', '1')
+      cy.get('.blog-item').find('.like-count').invoke('text').should('eq', '1')
     })
 
     it('blog post can be removed', function () {
@@ -85,8 +80,7 @@ describe('Bloglist ', function() {
       })
 
       // Open details and click the remove button.
-      cy
-        .get('.blog-item')
+      cy.get('.blog-item')
         .should('contain', 'Blog to be removed Removed Author')
         .contains('show')
         .click()
@@ -95,11 +89,7 @@ describe('Bloglist ', function() {
         .click()
 
       // Finally make sure the blog is not listed anymore.
-      cy
-        .get('.blog-item')
-        .find('.like-count')
-        .invoke('text')
-        .should('not.eq', 'Blog to be removed')
+      cy.get('.blog-item').find('.like-count').invoke('text').should('not.eq', 'Blog to be removed')
     })
 
     it('blog post remove button is visible only to the owner', function () {
@@ -121,8 +111,7 @@ describe('Bloglist ', function() {
       cy.visit('')
 
       // Open details and make sure remove button is not visible.
-      cy
-        .get('.blog-item')
+      cy.get('.blog-item')
         .contains('Blog to be removed Removed Author')
         .closest('.blog-item')
         .contains('show')
@@ -143,8 +132,7 @@ describe('Bloglist ', function() {
       cy.get('.blog-item__title').eq(1).should('contain', anotherBlogToTest.title)
 
       // Open details and click the like button.
-      cy
-        .get('.blog-item__title')
+      cy.get('.blog-item__title')
         .contains('My second own blog')
         .closest('.blog-item')
         .contains('show')

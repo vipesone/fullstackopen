@@ -2,7 +2,6 @@ import { useState } from 'react'
 import PropTypes from 'prop-types'
 
 const BlogForm = ({ addBlog }) => {
-
   const [blogTitle, setBlogTitle] = useState('')
   const [blogAuthor, setBlogAuthor] = useState('')
   const [blogUrl, setBlogUrl] = useState('')
@@ -32,7 +31,9 @@ const BlogForm = ({ addBlog }) => {
           <input id="blog-url" onChange={({ target }) => setBlogUrl(target.value)} />
         </div>
         <div>
-          <button type="submit" id="blog-submit">add</button>
+          <button type="submit" id="blog-submit">
+            add
+          </button>
         </div>
       </form>
     </>
