@@ -31,12 +31,12 @@ const remove = async (id) => {
   return response.data
 }
 
-const update = async (id, newBlog) => {
+const update = async (newBlog) => {
   const config = {
     headers: { Authorization: token }
   }
 
-  const response = await axios.put(`${baseUrl}/${id}`, newBlog, config)
+  const response = await axios.put(`${baseUrl}/${newBlog.id}`, newBlog, config)
   return response.data
 }
 

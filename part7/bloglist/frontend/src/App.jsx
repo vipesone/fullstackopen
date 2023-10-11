@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
+import { createBlog, deleteBlog, initializeBlogs, likeBlog } from './reducers/blogReducer'
 import { setNotification } from './reducers/notificationReducer'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
@@ -11,7 +12,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 const App = () => {
   const dispatch = useDispatch()
-  const [blogs, setBlogs] = useState([])
+  const blogs = useSelector((state) => state.blogs)
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -20,8 +21,8 @@ const App = () => {
   const blogFormRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
-  }, [])
+    dispatch(initializeBlogs())
+  }, [dispatch])
 
   useEffect(() => {
     const userJSON = window.localStorage.getItem('blogUser')
@@ -58,19 +59,8 @@ const App = () => {
   // Handle submit for blog addition form.
   const addBlog = async (newBlog) => {
     try {
-      const response = await blogService.create(newBlog)
-
-      const addedItem = {
-        ...response,
-        user: {
-          id: user.id,
-          name: user.name,
-          username: user.username
-        }
-      }
-
-      setBlogs(blogs.concat(addedItem))
-      dispatch(setNotification(`${response.title} by ${response.author} was added`, 'notification'))
+      dispatch(createBlog(newBlog))
+      dispatch(setNotification(`${newBlog.title} by ${newBlog.author} was added`, 'notification'))
       blogFormRef.current.toggle()
     } catch (exception) {
       const message = exception.response.data.error
@@ -82,18 +72,10 @@ const App = () => {
   }
 
   // Handle like button for single blog item.
-  const likeBlog = async (blog) => {
+  const handleLikeBlog = async (blog) => {
     try {
-      const updatedBlog = { ...blog, likes: blog.likes + 1 }
-
-      const response = await blogService.update(updatedBlog.id, updatedBlog)
-
-      const updatedBlogItems = blogs.map((blog) =>
-        blog.id === updatedBlog.id ? updatedBlog : blog
-      )
-
-      setBlogs(updatedBlogItems)
-      dispatch(setNotification(`${response.title} by ${response.author} was liked`, 'notification'))
+      dispatch(likeBlog(blog))
+      dispatch(setNotification(`${blog.title} by ${blog.author} was liked`, 'notification'))
     } catch (exception) {
       dispatch(setNotification('Unknown error while liking blog', 'error'))
     }
@@ -103,17 +85,9 @@ const App = () => {
   const removeBlog = async (blogToRemove) => {
     try {
       if (confirm(`Are you sure you want to remove ${blogToRemove.title}?`)) {
-        await blogService.remove(blogToRemove.id)
-
-        const updatedBlogItems = blogs.filter((blog) => blog.id !== blogToRemove.id)
-
-        setBlogs(updatedBlogItems)
-        dispatch(
-          setNotification(
-            `${blogToRemove.title} by ${blogToRemove.author} was removed`,
-            'notification'
-          )
-        )
+        const message = `${blogToRemove.title} by ${blogToRemove.author} was removed`
+        dispatch(deleteBlog(blogToRemove.id))
+        dispatch(setNotification(message, 'notification'))
       }
     } catch (exception) {
       dispatch(setNotification('Unknown error while removing blog', 'error'))
@@ -163,7 +137,7 @@ const App = () => {
             <Blog
               key={blog.id}
               blog={blog}
-              likeBlog={likeBlog}
+              likeBlog={handleLikeBlog}
               removeBlog={removeBlog}
               isOwner={blog.user && user.username === blog.user.username}
             />

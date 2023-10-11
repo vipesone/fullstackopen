@@ -5,10 +5,12 @@ import { configureStore } from '@reduxjs/toolkit'
 import App from './App'
 import './index.css'
 
+import blogReducer from './reducers/blogReducer'
 import notificationReducer from './reducers/notificationReducer'
 
 const store = configureStore({
   reducer: {
+    blogs: blogReducer,
     notification: notificationReducer
   }
 })
