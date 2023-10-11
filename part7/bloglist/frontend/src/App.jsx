@@ -1,17 +1,17 @@
 import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
+import { setNotification } from './reducers/notificationReducer'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { useDispatch, useSelector } from 'react-redux'
 
 const App = () => {
+  const dispatch = useDispatch()
   const [blogs, setBlogs] = useState([])
-
-  const [notificationMessage, setNotificationMessage] = useState(null)
-  const [notificationStatus, setNotificationStatus] = useState(null)
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -34,17 +34,6 @@ const App = () => {
     }
   }, [])
 
-  // Set up dissappearing notification.
-  const addTemporaryNotification = (message, status) => {
-    setNotificationMessage(message)
-    setNotificationStatus(status)
-
-    setTimeout(() => {
-      setNotificationMessage(null)
-      setNotificationStatus(null)
-    }, 3000)
-  }
-
   // Handle login through backend.
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -62,7 +51,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      addTemporaryNotification('Invalid credentials', 'error')
+      dispatch(setNotification('Invalid credentials', 'error'))
     }
   }
 
@@ -81,14 +70,14 @@ const App = () => {
       }
 
       setBlogs(blogs.concat(addedItem))
-      addTemporaryNotification(`${response.title} by ${response.author} was added`, 'notification')
+      dispatch(setNotification(`${response.title} by ${response.author} was added`, 'notification'))
       blogFormRef.current.toggle()
     } catch (exception) {
       const message = exception.response.data.error
         ? exception.response.data.error
         : 'Unknown error occurred while adding blog'
 
-      addTemporaryNotification(message, 'error')
+      dispatch(setNotification(message, 'error'))
     }
   }
 
@@ -104,9 +93,9 @@ const App = () => {
       )
 
       setBlogs(updatedBlogItems)
-      addTemporaryNotification(`${response.title} by ${response.author} was liked`, 'notification')
+      dispatch(setNotification(`${response.title} by ${response.author} was liked`, 'notification'))
     } catch (exception) {
-      addTemporaryNotification('Unknown error while liking blog', 'error')
+      dispatch(setNotification('Unknown error while liking blog', 'error'))
     }
   }
 
@@ -119,13 +108,15 @@ const App = () => {
         const updatedBlogItems = blogs.filter((blog) => blog.id !== blogToRemove.id)
 
         setBlogs(updatedBlogItems)
-        addTemporaryNotification(
-          `${blogToRemove.title} by ${blogToRemove.author} was removed`,
-          'notification'
+        dispatch(
+          setNotification(
+            `${blogToRemove.title} by ${blogToRemove.author} was removed`,
+            'notification'
+          )
         )
       }
     } catch (exception) {
-      addTemporaryNotification('Unknown error while removing blog', 'error')
+      dispatch(setNotification('Unknown error while removing blog', 'error'))
     }
   }
 
@@ -146,7 +137,7 @@ const App = () => {
   return (
     <div>
       <h1>Blogs</h1>
-      <Notification message={notificationMessage} status={notificationStatus} />
+      <Notification />
 
       {!user && (
         <LoginForm
