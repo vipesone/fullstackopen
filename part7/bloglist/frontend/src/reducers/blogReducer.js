@@ -28,6 +28,7 @@ export const likeBlog = (blog) => {
       ...blog,
       likes: blog.likes + 1
     }
+    console.log(blog, updatedBlog)
 
     const finalBlog = await blogService.update(updatedBlog)
 

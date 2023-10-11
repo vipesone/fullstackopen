@@ -26,34 +26,11 @@ const BlogList = ({ blogs, user }) => {
     }
   }
 
-  // Handle like button for single blog item.
-  const handleLikeBlog = async (blog) => {
-    try {
-      dispatch(likeBlog(blog))
-      dispatch(setNotification(`${blog.title} by ${blog.author} was liked`, 'notification'))
-    } catch (exception) {
-      dispatch(setNotification('Unknown error while liking blog', 'error'))
-    }
-  }
-
   // Returns sorted list of blogs as a copy.
   const sortByLikes = (blogs) => {
     return [...blogs].sort((a, b) => {
       return b.likes - a.likes
     })
-  }
-
-  // Handle removing single blog item.
-  const removeBlog = async (blogToRemove) => {
-    try {
-      if (confirm(`Are you sure you want to remove ${blogToRemove.title}?`)) {
-        const message = `${blogToRemove.title} by ${blogToRemove.author} was removed`
-        dispatch(deleteBlog(blogToRemove.id))
-        dispatch(setNotification(message, 'notification'))
-      }
-    } catch (exception) {
-      dispatch(setNotification('Unknown error while removing blog', 'error'))
-    }
   }
 
   if (!user) {
@@ -67,13 +44,7 @@ const BlogList = ({ blogs, user }) => {
         </Togglable>
 
         {sortByLikes(blogs).map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            likeBlog={handleLikeBlog}
-            removeBlog={removeBlog}
-            isOwner={blog.user && user.username === blog.user.username}
-          />
+          <Blog key={blog.id} blog={blog} />
         ))}
       </div>
     )

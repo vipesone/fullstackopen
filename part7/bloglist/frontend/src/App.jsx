@@ -11,6 +11,8 @@ import LoginForm from './components/LoginForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { useDispatch, useSelector } from 'react-redux'
+
+import BlogDetails from './components/BlogDetails'
 import BlogList from './components/BlogList'
 
 const App = () => {
@@ -66,9 +68,7 @@ const App = () => {
   }
 
   const blogMatch = useMatch('/blogs/:id')
-  const singleBlog = blogMatch
-    ? blogs.find((blog) => blog.id === Number(blogMatch.params.id))
-    : null
+  const singleBlog = blogMatch ? blogs.find((blog) => blog.id === blogMatch.params.id) : null
 
   return (
     <div>
@@ -88,6 +88,7 @@ const App = () => {
 
       <Routes>
         <Route path="/" element={<BlogList blogs={blogs} user={user} />} />
+        <Route path="/blogs/:id" element={<BlogDetails blog={singleBlog} user={user} />} />
       </Routes>
     </div>
   )
