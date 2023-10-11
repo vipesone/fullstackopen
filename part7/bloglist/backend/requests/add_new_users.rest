@@ -1,0 +1,19 @@
+### First item
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+  "username": "mattimeikalainen",
+  "name": "Matti Meikäläinen",
+  "password": "haukionkala"
+}
+
+### Second item
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+  "username": "maijameikalainen",
+  "name": "Mailja Meikäläinen",
+  "password": "tupuhupuna"
+}
