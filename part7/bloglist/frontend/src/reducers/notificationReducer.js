@@ -20,7 +20,6 @@ const notificationSlice = createSlice({
 
 export const setNotification = (message, status, visibleSeconds = 5) => {
   return (dispatch) => {
-    console.log('setNotification')
     dispatch(
       notificationChange({
         message: message,
