@@ -3,6 +3,7 @@ import Blog from './components/Blog'
 import Notification from './components/Notification'
 import { createBlog, deleteBlog, initializeBlogs, likeBlog } from './reducers/blogReducer'
 import { setNotification } from './reducers/notificationReducer'
+import { updateUser, resetUser } from './reducers/userReducer'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
@@ -14,9 +15,10 @@ const App = () => {
   const dispatch = useDispatch()
   const blogs = useSelector((state) => state.blogs)
 
+  const user = useSelector((state) => state.user)
+
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
 
   const blogFormRef = useRef()
 
@@ -30,10 +32,10 @@ const App = () => {
     if (userJSON) {
       const parsedUser = JSON.parse(userJSON)
 
-      setUser(parsedUser)
+      dispatch(updateUser(parsedUser))
       blogService.setToken(parsedUser.token)
     }
-  }, [])
+  }, [dispatch])
 
   // Handle login through backend.
   const handleLogin = async (event) => {
@@ -48,7 +50,7 @@ const App = () => {
       window.localStorage.setItem('blogUser', JSON.stringify(user))
 
       blogService.setToken(user.token)
-      setUser(user)
+      dispatch(updateUser(user))
       setUsername('')
       setPassword('')
     } catch (exception) {
@@ -104,7 +106,7 @@ const App = () => {
   // Clears out currently logged in user.
   const handleLogoutClick = () => {
     window.localStorage.removeItem('blogUser')
-    setUser(null)
+    dispatch(resetUser())
     blogService.setToken('')
   }
 
