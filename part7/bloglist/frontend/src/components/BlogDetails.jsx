@@ -1,12 +1,27 @@
 import { useDispatch } from 'react-redux'
 import { setNotification } from '../reducers/notificationReducer'
-import { deleteBlog, likeBlog } from '../reducers/blogReducer'
+import { createComment, deleteBlog, likeBlog } from '../reducers/blogReducer'
+import CommentForm from './CommentForm'
 
 const BlogDetails = ({ blog, currentUser }) => {
   const dispatch = useDispatch()
 
   if (!blog) {
     return null
+  }
+
+  // Handle submit for blog addition form.
+  const addComment = async (blog, newCommment) => {
+    try {
+      dispatch(createComment(blog, newCommment))
+      dispatch(setNotification(`${newCommment.content} was added`, 'notification'))
+    } catch (exception) {
+      const message = exception.response.data.error
+        ? exception.response.data.error
+        : 'Unknown error occurred while adding comment'
+
+      dispatch(setNotification(message, 'error'))
+    }
   }
 
   // Handle like button for single blog item.
@@ -53,6 +68,13 @@ const BlogDetails = ({ blog, currentUser }) => {
             Remove
           </button>
         )}
+      </div>
+      <div className="blog-item__comments">
+        <h2>Comments</h2>
+        <CommentForm addComment={addComment} blog={blog} />
+        { blog.comments && <ul>
+          {blog.comments.map((comment) => <li key={comment.id}>{comment.content}</li>)}
+        </ul>}
       </div>
     </div>
   )

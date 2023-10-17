@@ -28,11 +28,20 @@ export const likeBlog = (blog) => {
       ...blog,
       likes: blog.likes + 1
     }
-    console.log(blog, updatedBlog)
 
     const finalBlog = await blogService.update(updatedBlog)
 
     dispatch(updateBlog(finalBlog))
+  }
+}
+
+export const createComment = (blog, comment) => {
+  return async (dispatch) => {
+    const newComment = await blogService.createComment(blog.id, comment)
+
+    const newBlogValue = { ...blog, comments: blog.comments.concat(newComment) }
+
+    dispatch(updateBlog(newBlogValue))
   }
 }
 
