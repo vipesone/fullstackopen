@@ -4,18 +4,20 @@ const Menu = ({ logout, currentUser }) => {
     paddingRight: 5
   }
   return (
-    <div>
-      <Link to="/" style={padding}>
-        Blogs
-      </Link>
-      <Link to="/users" style={padding}>
-        Users
-      </Link>
-      {currentUser && (
-        <span>
-          {currentUser.name} is logged in <button onClick={logout}>logout</button>
-        </span>
-      )}
+    <div className="container mx-auto">
+      <div className="flex gap-2 items-center">
+        <Link to="/" style={padding}>
+          Blogs
+        </Link>
+        <Link to="/users" style={padding}>
+          Users
+        </Link>
+        {currentUser && (
+          <span className="ml-auto">
+            {currentUser.name} is logged in <button onClick={logout} className="bg-white hover:bg-amber-500 text-indigo-900 font-semibold rounded hover:text-white py-1 px-4">logout</button>
+          </span>
+        )}
+      </div>
     </div>
   )
 }

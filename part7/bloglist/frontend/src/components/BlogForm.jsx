@@ -18,20 +18,20 @@ const BlogForm = ({ addBlog }) => {
   return (
     <>
       <form onSubmit={createNewBlog} id="blog-form">
-        <div>
+        <div className="py-1">
           <label htmlFor="blog-title">Blog title:</label>
-          <input id="blog-title" onChange={({ target }) => setBlogTitle(target.value)} />
+          <input id="blog-title" onChange={({ target }) => setBlogTitle(target.value)} className="border-2 border-indigo-900 py-1 px-4 ml-2" />
         </div>
-        <div>
+        <div className="py-1">
           <label htmlFor="blog-author">Blog author:</label>
-          <input id="blog-author" onChange={({ target }) => setBlogAuthor(target.value)} />
+          <input id="blog-author" onChange={({ target }) => setBlogAuthor(target.value)} className="border-2 border-indigo-900 py-1 px-4 ml-2" />
         </div>
-        <div>
+        <div className="py-1">
           <label htmlFor="blog-url">Blog URL:</label>
-          <input id="blog-url" onChange={({ target }) => setBlogUrl(target.value)} />
+          <input id="blog-url" onChange={({ target }) => setBlogUrl(target.value)} className="border-2 border-indigo-900 py-1 px-4 ml-2" />
         </div>
-        <div>
-          <button type="submit" id="blog-submit">
+        <div className="py-1">
+          <button type="submit" id="blog-submit" className="bg-white hover:bg-amber-500 text-indigo-900 border-2 border-indigo-900 hover:border-amber-500 font-semibold hover:text-white py-1 px-4">
             add
           </button>
         </div>

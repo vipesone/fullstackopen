@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 .notification {
   color: green;
   background: lightgrey;
@@ -21,12 +25,3 @@
   gap: 10px 0;
 }
 
-.blog-item button {
-  margin-left: 6px;
-}
-
-.blog-item__details {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}

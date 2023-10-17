@@ -80,27 +80,31 @@ const App = () => {
   const singleUser = userMatch && users ? users.find((user) => user.id === userMatch.params.id) : null
 
   return (
-    <div>
-      <Menu logout={handleLogoutClick} currentUser={currentUser} />
-      <Notification />
+    <>
+      <div className="bg-indigo-600 text-white py-1.5">
+        <Menu logout={handleLogoutClick} currentUser={currentUser} />
+      </div>
+      <div className="container mx-auto prose container">
+        <Notification />
 
-      {!currentUser && (
-        <LoginForm
-          handleLogin={handleLogin}
-          username={username}
-          password={password}
-          setUsername={setUsername}
-          setPassword={setPassword}
-        />
-      )}
+        {!currentUser && (
+          <LoginForm
+            handleLogin={handleLogin}
+            username={username}
+            password={password}
+            setUsername={setUsername}
+            setPassword={setPassword}
+          />
+        )}
 
-      <Routes>
-        <Route path="/" element={<BlogList blogs={blogs} currentUser={currentUser} />} />
-        <Route path="/users" element={<UserList users={users} />} />
-        <Route path="/users/:id" element={<UserDetails user={singleUser} />} />
-        <Route path="/blogs/:id" element={<BlogDetails blog={singleBlog} currentUser={currentUser} />} />
-      </Routes>
-    </div>
+        <Routes>
+          <Route path="/" element={<BlogList blogs={blogs} currentUser={currentUser} />} />
+          <Route path="/users" element={<UserList users={users} />} />
+          <Route path="/users/:id" element={<UserDetails user={singleUser} />} />
+          <Route path="/blogs/:id" element={<BlogDetails blog={singleBlog} currentUser={currentUser} />} />
+        </Routes>
+      </div>
+    </>
   )
 }
 

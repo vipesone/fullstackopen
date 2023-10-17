@@ -58,13 +58,13 @@ const BlogDetails = ({ blog, currentUser }) => {
         <a href={blog.url}>{blog.url}</a>
         <div>
           Likes: <span className="like-count">{blog.likes}</span>{' '}
-          <button className="like-button" onClick={() => handleLikeBlog(blog)}>
+          <button className="bg-white hover:bg-amber-500 text-indigo-900 border-2 border-indigo-900 hover:border-amber-500 font-semibold hover:text-white py-1 px-4" onClick={() => handleLikeBlog(blog)}>
             like
           </button>
         </div>
         {blog.user && <div> Added by {blog.user.name}</div>}
         {isOwner && (
-          <button className="remove-button" onClick={() => removeBlog(blog)}>
+          <button className="bg-white hover:bg-amber-500 text-indigo-900 border-2 border-indigo-900 hover:border-amber-500 font-semibold hover:text-white py-1 px-4" onClick={() => removeBlog(blog)}>
             Remove
           </button>
         )}
@@ -72,7 +72,7 @@ const BlogDetails = ({ blog, currentUser }) => {
       <div className="blog-item__comments">
         <h2>Comments</h2>
         <CommentForm addComment={addComment} blog={blog} />
-        { blog.comments && <ul>
+        {blog.comments && <ul>
           {blog.comments.map((comment) => <li key={comment.id}>{comment.content}</li>)}
         </ul>}
       </div>
