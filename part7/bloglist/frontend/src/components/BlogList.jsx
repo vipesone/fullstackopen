@@ -6,7 +6,7 @@ import Togglable from './Togglable'
 import { createBlog, deleteBlog, likeBlog } from '../reducers/blogReducer'
 import { setNotification } from '../reducers/notificationReducer'
 
-const BlogList = ({ blogs, user }) => {
+const BlogList = ({ blogs, currentUser }) => {
   const dispatch = useDispatch()
 
   const blogFormRef = useRef()
@@ -33,7 +33,7 @@ const BlogList = ({ blogs, user }) => {
     })
   }
 
-  if (!user) {
+  if (!currentUser) {
     return null
   } else {
     return (

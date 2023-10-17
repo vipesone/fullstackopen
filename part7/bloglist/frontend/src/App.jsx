@@ -4,7 +4,7 @@ import Notification from './components/Notification'
 import Menu from './components/Menu'
 import { initializeBlogs } from './reducers/blogReducer'
 import { setNotification } from './reducers/notificationReducer'
-import { updateUser, resetUser } from './reducers/userReducer'
+import { updateCurrentUser, resetCurrentUser } from './reducers/currentUserReducer'
 
 import LoginForm from './components/LoginForm'
 
@@ -18,8 +18,9 @@ import BlogList from './components/BlogList'
 const App = () => {
   const dispatch = useDispatch()
   const blogs = useSelector((state) => state.blogs)
+  const authors = useSelector((state) => state.author)
 
-  const user = useSelector((state) => state.user)
+  const currentUser = useSelector((state) => state.currentUser)
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -34,7 +35,7 @@ const App = () => {
     if (userJSON) {
       const parsedUser = JSON.parse(userJSON)
 
-      dispatch(updateUser(parsedUser))
+      dispatch(updateCurrentUser(parsedUser))
       blogService.setToken(parsedUser.token)
     }
   }, [dispatch])
@@ -44,15 +45,15 @@ const App = () => {
     event.preventDefault()
 
     try {
-      const user = await loginService.login({
+      const currentUser = await loginService.login({
         username,
         password
       })
 
-      window.localStorage.setItem('blogUser', JSON.stringify(user))
+      window.localStorage.setItem('blogUser', JSON.stringify(currentUser))
 
-      blogService.setToken(user.token)
-      dispatch(updateUser(user))
+      blogService.setToken(currentUser.token)
+      dispatch(updateCurrentUser(currentUser))
       setUsername('')
       setPassword('')
     } catch (exception) {
@@ -63,20 +64,22 @@ const App = () => {
   // Clears out currently logged in user.
   const handleLogoutClick = () => {
     window.localStorage.removeItem('blogUser')
-    dispatch(resetUser())
+    dispatch(resetCurrentUser())
     blogService.setToken('')
   }
 
   const blogMatch = useMatch('/blogs/:id')
   const singleBlog = blogMatch ? blogs.find((blog) => blog.id === blogMatch.params.id) : null
 
+  const userMatch = useMatch('/users/:id')
+
   return (
     <div>
-      <Menu logout={handleLogoutClick} user={user} />
+      <Menu logout={handleLogoutClick} currentUser={currentUser} />
       <h1>Blogs</h1>
       <Notification />
 
-      {!user && (
+      {!currentUser && (
         <LoginForm
           handleLogin={handleLogin}
           username={username}
@@ -87,8 +90,8 @@ const App = () => {
       )}
 
       <Routes>
-        <Route path="/" element={<BlogList blogs={blogs} user={user} />} />
-        <Route path="/blogs/:id" element={<BlogDetails blog={singleBlog} user={user} />} />
+        <Route path="/" element={<BlogList blogs={blogs} currentUser={currentUser} />} />
+        <Route path="/blogs/:id" element={<BlogDetails blog={singleBlog} currentUser={currentUser} />} />
       </Routes>
     </div>
   )

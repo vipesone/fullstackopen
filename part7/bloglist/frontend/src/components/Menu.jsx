@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-const Menu = ({ logout, user }) => {
+const Menu = ({ logout, currentUser }) => {
   const padding = {
     paddingRight: 5
   }
@@ -11,9 +11,9 @@ const Menu = ({ logout, user }) => {
       <Link to="/users" style={padding}>
         Users
       </Link>
-      {user && (
+      {currentUser && (
         <span>
-          {user.name} is logged in <button onClick={logout}>logout</button>
+          {currentUser.name} is logged in <button onClick={logout}>logout</button>
         </span>
       )}
     </div>

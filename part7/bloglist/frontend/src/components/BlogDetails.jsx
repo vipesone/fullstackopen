@@ -2,7 +2,7 @@ import { useDispatch } from 'react-redux'
 import { setNotification } from '../reducers/notificationReducer'
 import { deleteBlog, likeBlog } from '../reducers/blogReducer'
 
-const BlogDetails = ({ blog, user }) => {
+const BlogDetails = ({ blog, currentUser }) => {
   const dispatch = useDispatch()
 
   if (!blog) {
@@ -32,7 +32,7 @@ const BlogDetails = ({ blog, user }) => {
     }
   }
 
-  const isOwner = blog.user && user.username === blog.user.username
+  const isOwner = blog.user && currentUser.username === blog.user.username
 
   return (
     <div className="blog-details">
