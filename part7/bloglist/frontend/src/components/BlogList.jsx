@@ -38,6 +38,7 @@ const BlogList = ({ blogs, currentUser }) => {
   } else {
     return (
       <div>
+        <h1>Blogs</h1>
         <h2>Add new blog item</h2>
         <Togglable buttonLabel="New blog" ref={blogFormRef}>
           <BlogForm addBlog={addBlog} />

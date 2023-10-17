@@ -14,8 +14,9 @@ import currentUserReducer from './reducers/currentUserReducer'
 const store = configureStore({
   reducer: {
     blogs: blogReducer,
+    currentUser: currentUserReducer,
     notification: notificationReducer,
-    currentUser: currentUserReducer
+    users: userReducer
   }
 })
 
