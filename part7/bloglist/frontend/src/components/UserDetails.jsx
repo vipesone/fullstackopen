@@ -6,24 +6,14 @@ const UserDetails = ({ user }) => {
 
   return (
     <div className="user-details">
-      <h2>
-        <span className="user-item__title">{user.username}</span>
-      </h2>
-      {/* <div className="blog-item__details">
-        <a href={blog.url}>{blog.url}</a>
-        <div>
-          Likes: <span className="like-count">{blog.likes}</span>{' '}
-          <button className="like-button" onClick={() => handleLikeBlog(blog)}>
-            like
-          </button>
-        </div>
-        {blog.user && <div> Added by {blog.user.name}</div>}
-        {isOwner && (
-          <button className="remove-button" onClick={() => removeBlog(blog)}>
-            Remove
-          </button>
-        )}
-      </div> */}
+      <h1>{user.name}</h1>
+      <h3>Added blogs</h3>
+      {!user.blogs && <strong>No blog posts found.</strong>}
+      {user.blogs && <ul>
+        {user.blogs.map((blog) => {
+          return <li key={blog.id}>{blog.title}</li>
+        })}
+      </ul>}
     </div>
   )
 }
