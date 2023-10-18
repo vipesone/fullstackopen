@@ -1,9 +1,13 @@
-const Books = (props) => {
-  if (!props.show) {
+const Books = ({ booksQuery, show }) => {
+  if (!show) {
     return null
   }
 
-  const books = []
+  if (booksQuery.loading) {
+    return <div>Loading...</div>
+  }
+
+  const books = booksQuery.data.allBooks
 
   return (
     <div>
