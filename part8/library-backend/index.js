@@ -29,20 +29,6 @@ let authors = [
   },
 ]
 
-/*
- * Suomi:
- * Saattaisi olla järkevämpää assosioida kirja ja sen tekijä tallettamalla kirjan yhteyteen tekijän nimen sijaan tekijän id
- * Yksinkertaisuuden vuoksi tallennamme kuitenkin kirjan yhteyteen tekijän nimen
- *
- * English:
- * It might make more sense to associate a book with its author by storing the author's id in the context of the book instead of the author's name
- * However, for simplicity, we will store the author's name in connection with the book
- *
- * Spanish:
- * Podría tener más sentido asociar un libro con su autor almacenando la id del autor en el contexto del libro en lugar del nombre del autor
- * Sin embargo, por simplicidad, almacenaremos el nombre del autor en conección con el libro
-*/
-
 let books = [
   {
     title: 'Clean Code',
@@ -95,6 +81,42 @@ let books = [
   },
 ]
 
+const mongoose = require('mongoose')
+mongoose.set('strictQuery', false)
+const Book = require('./models/book')
+const Author = require('./models/author')
+
+require('dotenv').config()
+
+const MONGODB_URI = process.env.MONGODB_URI
+
+console.log('connecting to', MONGODB_URI)
+
+mongoose.connect(MONGODB_URI)
+  .then(() => {
+    console.log('connected to MongoDB')
+
+    // authors.map((author) => {
+    //   delete author.id
+    //   const newAuthor = new Author(author)
+    //   newAuthor.save()
+    // })
+
+    // books.map((book) => {
+    //   delete book.id
+
+    //   Author.findOne({name: book.author })
+    //     .then((author) => {
+    //       book.author = author._id
+    //       Book(book).save()
+    //     })
+    // })
+
+  })
+  .catch((error) => {
+    console.log('error connection to MongoDB:', error.message)
+  })
+
 const typeDefs = `
   type Author {
     name: String!
@@ -106,7 +128,7 @@ const typeDefs = `
   type Book {
     title: String!
     published: Int!
-    author: String!
+    author: Author!
     id: ID!
     genres: [String]
   }
@@ -139,48 +161,54 @@ const resolvers = {
     }
   },
   Mutation: {
-    addBook: (root, args) => {
-      const book = { ...args, id: uuid() }
-      books = books.concat(book)
+    addBook: async (root, args) => {
+      const book = new Book({ ...args })
+      return book.save()
 
-      if (!authors.find((author) => author.name === args.author)) {
-        const author = {
-          name: args.author,
-          id: uuid()
-        }
-        authors = authors.concat(author)
-      }
+      // if (!authors.find((author) => author.name === args.author)) {
+      //   const author = {
+      //     name: args.author,
+      //     id: uuid()
+      //   }
+      //   authors = authors.concat(author)
+      // }
 
-      return book
+      // return book
     },
-    editAuthor: (root, args) => {
-      const existingAuthor = authors.find((author) => author.name === args.name)
-      if (!existingAuthor) {
-        return null
-      }
-      const updatedAuthor = { ...existingAuthor, born: args.setBornTo }
-      authors = authors.map((author) => author.name === args.name ? updatedAuthor : author)
+    editAuthor: async (root, args) => {
+      const author = await Author.findOne({ name: args.name })
+      author.born = args.setBornTo
+      return author.save()
+      // const existingAuthor = authors.find((author) => author.name === args.name)
+      // if (!existingAuthor) {
+      //   return null
+      // }
+      // const updatedAuthor = { ...existingAuthor, born: args.setBornTo }
+      // authors = authors.map((author) => author.name === args.name ? updatedAuthor : author)
 
-      return updatedAuthor
+      // return updatedAuthor
     }
   },
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
-    allBooks: (root, args) => {
-      let filteredBooks = books
-      if (args.author) {
-        filteredBooks = filteredBooks.filter((book) => book.author === args.author)
-      }
+    bookCount: async () => Book.collection.countDocuments(),
+    authorCount: async () => Author.collection.countDocuments(),
+    allBooks: async(root, args) => {
+      return Book.find({}).populate('author')
+      // let filteredBooks = books
+      // if (args.author) {
+      //   filteredBooks = filteredBooks.filter((book) => book.author === args.author)
+      // }
 
-      if (args.genre) {
-        filteredBooks = filteredBooks.filter((book) => {
-          return book.genres.includes(args.genre)
-        })
-      }
-      return filteredBooks
+      // if (args.genre) {
+      //   filteredBooks = filteredBooks.filter((book) => {
+      //     return book.genres.includes(args.genre)
+      //   })
+      // }
+      // return filteredBooks
     },
-    allAuthors: () => authors
+    allAuthors: async() => {
+      return Author.find({})
+    }
   }
 }
 
