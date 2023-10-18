@@ -1,4 +1,6 @@
-const Authors = ({ authorsQuery, show }) => {
+import EditAuthor from "./EditAuthor"
+
+const Authors = ({ authorsQuery, setError, show }) => {
   if (!show || !authorsQuery) {
     return null
   }
@@ -27,6 +29,8 @@ const Authors = ({ authorsQuery, show }) => {
           ))}
         </tbody>
       </table>
+
+      <EditAuthor authors={authors} setError={setError} />
     </div>
   )
 }
