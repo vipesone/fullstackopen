@@ -1,8 +1,12 @@
-const Authors = (props) => {
-  if (!props.show) {
+const Authors = ({ authorsQuery, show }) => {
+  if (!show || !authorsQuery) {
     return null
   }
-  const authors = []
+
+  if (authorsQuery.loading) {
+    return <div>Loading...</div>
+  }
+  const authors = authorsQuery.data.allAuthors
 
   return (
     <div>
