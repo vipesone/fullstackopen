@@ -21,7 +21,7 @@ const EditAuthor = ({ authors, setError }) => {
     updateAuthorBorn({
       variables: {
         name,
-        born: Number.parseInt(born, 10)
+        born: born.length ? Number.parseInt(born, 10) : undefined
       }
     })
 
