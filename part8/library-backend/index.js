@@ -1,4 +1,4 @@
-const { v1: uuid } = require('uuid')
+const jwt = require('jsonwebtoken')
 
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
@@ -85,6 +85,8 @@ const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
 const Book = require('./models/book')
 const Author = require('./models/author')
+const User = require('./models/user')
+const { GraphQLError } = require('graphql')
 
 require('dotenv').config()
 
@@ -95,23 +97,6 @@ console.log('connecting to', MONGODB_URI)
 mongoose.connect(MONGODB_URI)
   .then(() => {
     console.log('connected to MongoDB')
-
-    // authors.map((author) => {
-    //   delete author.id
-    //   const newAuthor = new Author(author)
-    //   newAuthor.save()
-    // })
-
-    // books.map((book) => {
-    //   delete book.id
-
-    //   Author.findOne({name: book.author })
-    //     .then((author) => {
-    //       book.author = author._id
-    //       Book(book).save()
-    //     })
-    // })
-
   })
   .catch((error) => {
     console.log('error connection to MongoDB:', error.message)
@@ -140,10 +125,18 @@ const typeDefs = `
       author: String!
       genres: [String]
     ): Book
+    createUser(
+      username: String!
+      favoriteGenre: String!
+    ): User
     editAuthor(
       name: String!
       setBornTo: Int
     ): Author
+    login(
+      username: String!
+      password: String!
+    ): Token
   }
 
   type Query {
@@ -151,6 +144,17 @@ const typeDefs = `
     authorCount: Int!
     allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
+    me: User
+  }
+
+  type Token {
+    value: String!
+  }
+
+  type User {
+    username: String!
+    favoriteGenre: String!
+    id: ID!
   }
 `
 
@@ -161,7 +165,13 @@ const resolvers = {
     }
   },
   Mutation: {
-    addBook: async (root, args) => {
+    addBook: async (root, args, context) => {
+      const currentUser = context.currentUser
+
+      if (!currentUser) {
+        throw new GraphQLError('You are not authorized, try logging in first.')
+      }
+
       let authorId = null
 
       const authorDocument = await Author.findOne({ name: args.author })
@@ -201,7 +211,21 @@ const resolvers = {
       }
       return book
     },
-    editAuthor: async (root, args) => {
+    createUser: async (root, args) => {
+      const user = new User({
+        username: args.username,
+        favoriteGenre: args.favoriteGenre
+      })
+
+      return user.save()
+    },
+    editAuthor: async (root, args, context) => {
+      const currentUser = context.currentUser
+
+      if (!currentUser) {
+        throw new GraphQLError('You are not authorized, try logging in first.')
+      }
+
       const author = await Author.findOne({ name: args.name })
       author.born = args.setBornTo
       try {
@@ -217,6 +241,26 @@ const resolvers = {
       }
 
       return author
+    },
+    login: async (root, args) => {
+      const user = await User.findOne({ username: args.username })
+
+      if (!user || args.password !== 'secret') {
+        throw new GraphQLError('Incorrect credentials', {
+          extensions: {
+            code: 'BAD_USER_INPUT'
+          }
+        })
+      }
+
+      const userInformation = {
+        username: user.username,
+        id: user._id
+      }
+
+      return {
+        value: jwt.sign(userInformation, process.env.SECRET)
+      }
     }
   },
   Query: {
@@ -245,6 +289,10 @@ const resolvers = {
     },
     allAuthors: async() => {
       return Author.find({})
+    },
+    me: (root, args, context) => {
+      console.log(context)
+      return context.currentUser
     }
   }
 }
@@ -256,6 +304,15 @@ const server = new ApolloServer({
 
 startStandaloneServer(server, {
   listen: { port: 4000 },
+  context: async ({ req, res }) => {
+    const auth = req ? req.headers.authorization : null
+
+    if (auth && auth.startsWith('Bearer ')) {
+      const token = jwt.verify(auth.substring(7), process.env.SECRET)
+      const currentUser = await User.findById(token.id)
+      return { currentUser }
+    }
+  }
 }).then(({ url }) => {
   console.log(`Server ready at ${url}`)
 })
