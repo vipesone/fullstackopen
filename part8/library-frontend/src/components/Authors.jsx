@@ -1,6 +1,6 @@
 import EditAuthor from "./EditAuthor"
 
-const Authors = ({ authorsQuery, setError, show }) => {
+const Authors = ({ authorsQuery, setError, show, showForm }) => {
   if (!show || !authorsQuery) {
     return null
   }
@@ -30,7 +30,7 @@ const Authors = ({ authorsQuery, setError, show }) => {
         </tbody>
       </table>
 
-      <EditAuthor authors={authors} setError={setError} />
+      {showForm && <EditAuthor authors={authors} setError={setError} />}
     </div>
   )
 }

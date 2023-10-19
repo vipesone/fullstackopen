@@ -38,6 +38,14 @@ export const CREATE_BOOK = gql`
   }
 `
 
+export const LOGIN = gql`
+  mutation login($username: String!, $password: String!) {
+    login(username: $username, password: $password)  {
+      value
+    }
+  }
+`
+
 export const UPDATE_AUTHOR_BORN = gql`
   mutation updateAuthorBorn($name: String!, $born: Int!) {
     editAuthor(name: $name, setBornTo: $born) {
