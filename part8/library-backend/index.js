@@ -169,21 +169,54 @@ const resolvers = {
       if (authorDocument && authorDocument._id) {
         authorId = authorDocument._id
       } else {
-        const newAuthor = new Author({ name: args.author })
+        try {
+          const newAuthor = new Author({ name: args.author })
 
-        const addedAuthor = await newAuthor.save()
+          const addedAuthor = await newAuthor.save()
 
-        authorId = addedAuthor._id
+          authorId = addedAuthor._id
+        } catch(error) {
+          throw new GraphQLError('Could not save author information, please check input.', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.name,
+              error
+            }
+          })
+        }
       }
 
       const book = new Book({ ...args, author: authorId })
 
-      return book.save().then((savedBook) => savedBook.populate('author'))
+      try {
+        await book.save().then((savedBook) => savedBook.populate('author'))
+      } catch(error) {
+        throw new GraphQLError('Could not save author information, please check input.', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.name,
+            error
+          }
+        })
+      }
+      return book
     },
     editAuthor: async (root, args) => {
       const author = await Author.findOne({ name: args.name })
       author.born = args.setBornTo
-      return author.save()
+      try {
+        await author.save()
+      } catch(error) {
+        throw new GraphQLError('Could not update author born year, please check input.', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.setBornTo,
+            error
+          }
+        })
+      }
+
+      return author
     }
   },
   Query: {
