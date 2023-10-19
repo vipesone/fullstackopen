@@ -22,7 +22,7 @@ const NewBook = ({setError, show}) => {
     return null
   }
 
-  const submit = async (event) => {
+  const submit = (event) => {
     event.preventDefault()
 
     createBook({
@@ -32,13 +32,15 @@ const NewBook = ({setError, show}) => {
         author,
         genres
       }
+    }).then((result) => {
+      if (!result.errors) {
+        setTitle('')
+        setPublished('')
+        setAuthor('')
+        setGenres([])
+        setGenre('')
+      }
     })
-
-    setTitle('')
-    setPublished('')
-    setAuthor('')
-    setGenres([])
-    setGenre('')
   }
 
   const addGenre = () => {
