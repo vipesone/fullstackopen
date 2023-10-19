@@ -144,6 +144,7 @@ const typeDefs = `
     authorCount: Int!
     allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
+    allGenres: [String]
     me: User
   }
 
@@ -266,7 +267,7 @@ const resolvers = {
   Query: {
     bookCount: async () => Book.collection.countDocuments(),
     authorCount: async () => Author.collection.countDocuments(),
-    allBooks: async(root, args) => {
+    allBooks: async (root, args) => {
       let conditions = {}
 
       if (args.genre) {
@@ -289,6 +290,22 @@ const resolvers = {
     },
     allAuthors: async() => {
       return Author.find({})
+    },
+    allGenres: async (root, args) => {
+      let genres = []
+      const books = await Book.find({})
+
+      books.map((book) => {
+        if (book.genres) {
+          genres = genres.concat(book.genres)
+        }
+      })
+
+      genres.push('all genres')
+
+      const uniqueGenres = [...new Set(genres)]
+
+      return uniqueGenres
     },
     me: (root, args, context) => {
       console.log(context)

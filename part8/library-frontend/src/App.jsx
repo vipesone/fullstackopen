@@ -7,11 +7,11 @@ import LoginForm from './components/LoginForm'
 
 import { useApolloClient, useQuery } from '@apollo/client'
 
-import { ALL_AUTHORS, ALL_BOOKS } from './queries'
+import { ALL_AUTHORS } from './queries'
 
 const App = () => {
   const [token, setToken] = useState(window.localStorage.getItem('library-token'))
-  const [page, setPage] = useState('authors')
+  const [page, setPage] = useState('books')
 
   const [errorMessage, setErrorMessage] = useState(null)
 
@@ -23,7 +23,6 @@ const App = () => {
   }
 
   const authorsQuery = useQuery(ALL_AUTHORS)
-  const booksQuery = useQuery(ALL_BOOKS)
 
   const client = useApolloClient()
 
@@ -50,7 +49,7 @@ const App = () => {
 
       <Authors show={page === 'authors'} authorsQuery={authorsQuery} setError={notify} showForm={token ? true : false} />
 
-      <Books show={page === 'books'} booksQuery={booksQuery} />
+      <Books show={page === 'books'} />
 
       <NewBook show={page === 'add'} setError={notify} />
 
