@@ -2,13 +2,13 @@ import { useQuery } from "@apollo/client"
 import { ALL_BOOKS} from "../queries"
 
 const Recommendations = ({ show, genre }) => {
-  if (!show) {
-    return null
-  }
-
   const { loading, data } = useQuery(ALL_BOOKS, {
     variables: { genre }
   })
+
+  if (!show) {
+    return null
+  }
 
   if (loading) {
     return <div>Loading...</div>

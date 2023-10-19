@@ -63,7 +63,7 @@ const App = () => {
 
       <NewBook show={page === 'add'} setError={notify} />
 
-      <LoginForm show={page == 'login'} setToken={setToken} setError={notify} setPage={setPage} />
+      <LoginForm show={page == 'login'} setFavoriteGenre={setFavoriteGenre} setToken={setToken} setError={notify} setPage={setPage} />
       <Recommendations show={page == 'recommendations'} genre={favoriteGenre} />
     </div>
   )

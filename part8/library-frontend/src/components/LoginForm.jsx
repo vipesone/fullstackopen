@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react"
 import { useMutation } from "@apollo/client"
 import { LOGIN } from "../queries"
-const LoginForm = ({ setToken, setError, setPage, show }) => {
-  if (!show) {
-    return null
-  }
+const LoginForm = ({ setFavoriteGenre, setToken, setError, setPage, show }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
@@ -17,12 +14,18 @@ const LoginForm = ({ setToken, setError, setPage, show }) => {
   useEffect(() => {
     if (result.data) {
       const token = result.data.login.token
+      const favoriteGenre = result.data.login.favoriteGenre
       setToken(token)
       localStorage.setItem('library-token', token)
-      localStorage.setItem('library-favoriteGenre', result.data.login.favoriteGenre)
+      setFavoriteGenre(favoriteGenre)
+      localStorage.setItem('library-favoriteGenre', favoriteGenre)
       setPage('books')
     }
   }, [result.data])
+
+  if (!show) {
+    return null
+  }
 
   const submit = async (event) => {
     event.preventDefault()
