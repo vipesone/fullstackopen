@@ -4,15 +4,17 @@ import { ALL_BOOKS, ALL_GENRES} from "../queries"
 
 const Books = ({ show }) => {
   const [genre, setGenre] = useState(null)
-  if (!show) {
-    return null
-  }
 
   const { loading, data } = useQuery(ALL_BOOKS, {
-    variables: { genre }
+    variables: { genre },
+    fetchPolicy: 'cache-and-network'
   })
 
   const genreQuery = useQuery(ALL_GENRES)
+
+  if (!show) {
+    return null
+  }
 
   if (loading || genreQuery.loading) {
     return <div>Loading...</div>
@@ -25,7 +27,11 @@ const Books = ({ show }) => {
   return (
     <div>
       <h2>books</h2>
-
+      {genre && (
+        <p>
+          in genre <strong>{genre}</strong>
+        </p>
+      )}
       <table>
         <tbody>
           <tr>

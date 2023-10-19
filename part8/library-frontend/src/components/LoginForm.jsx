@@ -16,9 +16,10 @@ const LoginForm = ({ setToken, setError, setPage, show }) => {
 
   useEffect(() => {
     if (result.data) {
-      const token = result.data.login.value
+      const token = result.data.login.token
       setToken(token)
       localStorage.setItem('library-token', token)
+      localStorage.setItem('library-favoriteGenre', result.data.login.favoriteGenre)
       setPage('books')
     }
   }, [result.data])
