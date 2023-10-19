@@ -136,7 +136,7 @@ const typeDefs = `
     login(
       username: String!
       password: String!
-    ): Token
+    ): LoginResponse
   }
 
   type Query {
@@ -148,8 +148,9 @@ const typeDefs = `
     me: User
   }
 
-  type Token {
-    value: String!
+  type LoginResponse {
+    token: String!
+    favoriteGenre: String
   }
 
   type User {
@@ -260,7 +261,8 @@ const resolvers = {
       }
 
       return {
-        value: jwt.sign(userInformation, process.env.SECRET)
+        token: jwt.sign(userInformation, process.env.SECRET),
+        favoriteGenre: user.favoriteGenre
       }
     }
   },
