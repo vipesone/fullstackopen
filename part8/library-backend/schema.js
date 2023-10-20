@@ -44,6 +44,10 @@ const typeDefs = `
     me: User
   }
 
+  type Subscription {
+    bookAdded: Book!
+  }
+
   type LoginResponse {
     token: String!
     favoriteGenre: String
