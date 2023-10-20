@@ -5,10 +5,17 @@ import { ALL_BOOKS, ALL_GENRES} from "../queries"
 const Books = ({ show }) => {
   const [genre, setGenre] = useState(null)
 
-  const { loading, data } = useQuery(ALL_BOOKS, {
-    variables: { genre },
+  let parameters = {
     fetchPolicy: 'cache-and-network'
-  })
+  }
+
+  if (genre) {
+    parameters.variables = {
+      genre: genre
+    }
+  }
+
+  const { loading, data } = useQuery(ALL_BOOKS, parameters)
 
   const genreQuery = useQuery(ALL_GENRES)
 
