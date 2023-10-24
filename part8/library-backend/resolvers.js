@@ -9,7 +9,7 @@ const pubsub = new PubSub()
 const resolvers = {
   Author: {
     bookCount: (root) => {
-      return Book.collection.countDocuments({ author: root._id })
+      return root.books.length
     }
   },
   Mutation: {
@@ -22,7 +22,7 @@ const resolvers = {
 
       let authorId = null
 
-      const authorDocument = await Author.findOne({ name: args.author })
+      let authorDocument = await Author.findOne({ name: args.author })
 
       if (authorDocument && authorDocument._id) {
         authorId = authorDocument._id
@@ -30,9 +30,9 @@ const resolvers = {
         try {
           const newAuthor = new Author({ name: args.author })
 
-          const addedAuthor = await newAuthor.save()
+          authorDocument = await newAuthor.save()
 
-          authorId = addedAuthor._id
+          authorId = authorDocument._id
         } catch(error) {
           throw new GraphQLError('Could not save author information, please check input.', {
             extensions: {
@@ -48,6 +48,10 @@ const resolvers = {
 
       try {
         await book.save().then((savedBook) => savedBook.populate('author'))
+
+        authorDocument.books.push(book._id)
+
+        await authorDocument.save()
       } catch(error) {
         throw new GraphQLError('Could not save author information, please check input.', {
           extensions: {
