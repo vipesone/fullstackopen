@@ -1,6 +1,11 @@
+interface Measurements {
+  height: number;
+  weight: number;
+}
+
 function calculateBmi(height: number, weight: number): string {
   const heightInMeters = height / 100;
-  const bmi = weight / (heightInMeters  * heightInMeters);
+  const bmi = weight / (heightInMeters * heightInMeters);
 
   if (bmi < 16) {
     return "Underweight (Severe thinness)";
@@ -21,4 +26,34 @@ function calculateBmi(height: number, weight: number): string {
   }
 }
 
-console.log(calculateBmi(180, 74));
+const parseArguments = (arguments: string[]): Measurements => {
+  if (arguments.length !== 4) {
+    throw new Error('Incorrect amount of arguments. Example use: npm run calculateBmi 170 72');
+  }
+
+  const height = Number(arguments[2]);
+  const weight = Number(arguments[3]);
+
+  if (Number.isNaN(height) || Number.isNaN(weight)) {
+    throw new Error('Make sure your arguments are numbers. Example use: npm run calculateBmi 170 72');
+  }
+
+  return {
+    height: height,
+    weight: weight
+  }
+}
+
+try {
+  const { height, weight } = parseArguments(process.argv);
+  console.log(calculateBmi(height, weight));
+} catch (error: unknown) {
+  let errorMessage = 'An error occurred while executing the application.'
+  if (error instanceof Error) {
+    errorMessage = `${errorMessage} Error: ${error.message}`;
+  }
+
+  console.log(errorMessage);
+}
+
+
